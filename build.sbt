@@ -123,8 +123,8 @@ lazy val root = (project in file("."))
   .settings(
     sharedSettings ++ Publishing.noPublishSettings
   ).settings(
-    name := "phantom",
-    moduleName := "phantom",
+    name := "sql-parser",
+    moduleName := "sql-parser",
     pgpPassphrase := Publishing.pgpPass,
     commands += Command.command("testsWithCoverage") { state =>
       "coverage" ::
@@ -135,14 +135,15 @@ lazy val root = (project in file("."))
       state
     }
   ).aggregate(
+    sqlParser,
     readme
   )
 
 lazy val sqlParser = (project in file("parser"))
   .settings(sharedSettings: _*)
   .settings(
-    name := "sql-parser",
-    moduleName := "sql-parser",
+    name := "sql-parser-dsl",
+    moduleName := "sql-parser-dsl",
     crossScalaVersions := Versions.scalaAll,
     concurrentRestrictions in Test := Seq(
       Tags.limit(Tags.ForkedTestGroup, defaultConcurrency)
@@ -164,7 +165,7 @@ lazy val readme = (project in file("readme"))
     publishArtifact := false,
     crossScalaVersions := Seq(Versions.scala211, Versions.scala212),
     tutSourceDirectory := sourceDirectory.value / "main" / "tut",
-    tutTargetDirectory := phantom.base / "docs",
+    tutTargetDirectory := root.base / "docs",
     libraryDependencies ++= Seq(
       "org.typelevel" %% "macro-compat" % Versions.macrocompat % "tut",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "tut",
