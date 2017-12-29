@@ -1,0 +1,49 @@
+language: scala
+sudo: required
+dist: trusty
+scala:
+- 2.11.11
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.ivy2
+  - $HOME/.sbt/boot/scala-$TRAVIS_SCALA_VERSION
+before_cache:
+- find $HOME/.ivy2 -name "ivydata-*.properties" -delete
+- find $HOME/.sbt -name "*.lock" -delete
+env:
+  global:
+  - TARGET_SCALA_VERSION: 2.12.4
+  - GH_REF: github.com/outworkers/sql-parser.git
+notifications:
+  slack:
+  - websudos:P9QNXx1ZGFnDHp3v3jUqtB8k
+  email:
+  - dev@outworkers.com
+branches:
+  only:
+  - master
+  - develop
+jdk:
+- oraclejdk8
+matrix:
+  include:
+  - scala: 2.12.4
+    jdk: oraclejdk8
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer
+before_install: unset SBT_OPTS JVM_OPTS
+before_script:
+- mkdir -p $HOME/.sbt/launchers/0.13.16/
+- curl -L -o $HOME/.sbt/launchers/0.13.16/sbt-launch.jar https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.16/sbt-launch.jar
+- travis_retry sbt "++$TRAVIS_SCALA_VERSION update"
+script:
+  - sbt test
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $github_token
+  on:
+    branch: develop
