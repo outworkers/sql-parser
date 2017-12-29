@@ -16,6 +16,31 @@
 import sbt.Keys._
 import sbt._
 
+lazy val Versions = new {
+  val logback = "1.2.3"
+  val util = "0.38.0"
+  val json4s = "3.5.1"
+  val datastax = "3.3.2"
+  val scalatest = "3.0.4"
+  val shapeless = "2.3.2"
+  val scalacheck = "1.13.5"
+  val slf4j = "1.7.25"
+  val joda = "2.9.9"
+  val jodaConvert = "1.8.1"
+  val macrocompat = "1.1.1"
+  val macroParadise = "2.1.0"
+  val circe = "0.8.0"
+  val playAnorm = "2.5.3"
+  
+  val scala = new {
+    val 210 = "2.10.6"
+    val 211 = "2.11.11"
+    val 212 = "2.12.4"
+    val all = Seq(scala210, scala211, scala212)
+  }
+
+}
+
 lazy val ScalacOptions = Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
@@ -89,7 +114,7 @@ val defaultConcurrency = 4
 
 val sharedSettings: Seq[Def.Setting[_]] = Defaults.coreDefaultSettings ++ Seq(
   organization := "com.outworkers",
-  scalaVersion := Versions.scala212,
+  scalaVersion := Versions.scala.212,
   credentials ++= Publishing.defaultCredentials,
   resolvers ++= Seq(
     Resolver.typesafeRepo("releases"),
@@ -144,11 +169,13 @@ lazy val sqlParser = (project in file("parser"))
   .settings(
     name := "sql-parser-dsl",
     moduleName := "sql-parser-dsl",
-    crossScalaVersions := Versions.scalaAll,
+    crossScalaVersions := Versions.scala.all,
     concurrentRestrictions in Test := Seq(
       Tags.limit(Tags.ForkedTestGroup, defaultConcurrency)
     ),
     libraryDependencies ++= Seq(
+      "com.typesafe.play" %% "anorm" % Versions.playAnorm,
+      "com.github.mauricio" %% "postgresql-async" % Versions.postgresAsync,
       "org.typelevel" %% "macro-compat" % Versions.macrocompat,
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
       compilerPlugin("org.scalamacros" % "paradise" % Versions.macroParadise cross CrossVersion.full),
@@ -163,7 +190,7 @@ lazy val readme = (project in file("readme"))
   .settings(sharedSettings)
   .settings(
     publishArtifact := false,
-    crossScalaVersions := Seq(Versions.scala211, Versions.scala212),
+    crossScalaVersions := Seq(Versions.scala.211, Versions.scala.212),
     tutSourceDirectory := sourceDirectory.value / "main" / "tut",
     tutTargetDirectory := root.base / "docs",
     libraryDependencies ++= Seq(
