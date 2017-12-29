@@ -118,3 +118,68 @@ val sharedSettings: Seq[Def.Setting[_]] = Defaults.coreDefaultSettings ++ Seq(
   envVars := Map("SCALACTIC_FILL_FILE_PATHNAMES" -> "yes"),
   parallelExecution in ThisBuild := false
 ) ++ Publishing.effectiveSettings
+
+lazy val root = (project in file("."))
+  .settings(
+    sharedSettings ++ Publishing.noPublishSettings
+  ).settings(
+    name := "phantom",
+    moduleName := "phantom",
+    pgpPassphrase := Publishing.pgpPass,
+    commands += Command.command("testsWithCoverage") { state =>
+      "coverage" ::
+      "test" ::
+      "coverageReport" ::
+      "coverageAggregate" ::
+      "coveralls" ::
+      state
+    }
+  ).aggregate(
+    readme
+  )
+
+lazy val sqlParser = (project in file("parser"))
+  .settings(sharedSettings: _*)
+  .settings(
+    name := "sql-parser",
+    moduleName := "sql-parser",
+    crossScalaVersions := Versions.scalaAll,
+    concurrentRestrictions in Test := Seq(
+      Tags.limit(Tags.ForkedTestGroup, defaultConcurrency)
+    ),
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "macro-compat" % Versions.macrocompat,
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
+      compilerPlugin("org.scalamacros" % "paradise" % Versions.macroParadise cross CrossVersion.full),
+      "com.chuusai"                  %% "shapeless" % Versions.shapeless,
+      "joda-time"                    %  "joda-time" % Versions.joda,
+      "org.joda"                     %  "joda-convert" % Versions.jodaConvert
+    )
+  )
+
+
+lazy val readme = (project in file("readme"))
+  .settings(sharedSettings)
+  .settings(
+    publishArtifact := false,
+    crossScalaVersions := Seq(Versions.scala211, Versions.scala212),
+    tutSourceDirectory := sourceDirectory.value / "main" / "tut",
+    tutTargetDirectory := phantom.base / "docs",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "macro-compat" % Versions.macrocompat % "tut",
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "tut",
+      compilerPlugin("org.scalamacros" % "paradise" % Versions.macroParadise cross CrossVersion.full),
+      "com.outworkers" %% "util-samplers" % Versions.util % "tut",
+      "io.circe" %% "circe-parser" % Versions.circe % "tut",
+      "io.circe" %% "circe-generic" % Versions.circe % "tut",
+      "org.scalatest" %% "scalatest" % Versions.scalatest % "tut"
+    )
+  ).dependsOn(
+    phantomDsl,
+    phantomJdk8,
+    phantomExample,
+    phantomConnectors,
+    phantomFinagle,
+    phantomStreams,
+    phantomThrift
+  ).enablePlugins(TutPlugin, CrossPerProjectPlugin)
