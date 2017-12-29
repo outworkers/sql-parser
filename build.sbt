@@ -31,12 +31,13 @@ lazy val Versions = new {
   val macroParadise = "2.1.0"
   val circe = "0.8.0"
   val playAnorm = "2.5.3"
-  
+  val postgresAsync = "0.2.21"
+
   val scala = new {
-    val 210 = "2.10.6"
-    val 211 = "2.11.11"
-    val 212 = "2.12.4"
-    val all = Seq(scala210, scala211, scala212)
+    val `210` = "2.10.6"
+    val `211` = "2.11.11"
+    val `212` = "2.12.4"
+    val all = Seq(`210`, `211`, `212`)
   }
 
 }
@@ -114,7 +115,7 @@ val defaultConcurrency = 4
 
 val sharedSettings: Seq[Def.Setting[_]] = Defaults.coreDefaultSettings ++ Seq(
   organization := "com.outworkers",
-  scalaVersion := Versions.scala.212,
+  scalaVersion := Versions.scala.`212`,
   credentials ++= Publishing.defaultCredentials,
   resolvers ++= Seq(
     Resolver.typesafeRepo("releases"),
@@ -160,8 +161,7 @@ lazy val root = (project in file("."))
       state
     }
   ).aggregate(
-    sqlParser,
-    readme
+    sqlParser
   )
 
 lazy val sqlParser = (project in file("parser"))
@@ -190,7 +190,7 @@ lazy val readme = (project in file("readme"))
   .settings(sharedSettings)
   .settings(
     publishArtifact := false,
-    crossScalaVersions := Seq(Versions.scala.211, Versions.scala.212),
+    crossScalaVersions := Seq(Versions.scala.`211`, Versions.scala.`212`),
     tutSourceDirectory := sourceDirectory.value / "main" / "tut",
     tutTargetDirectory := root.base / "docs",
     libraryDependencies ++= Seq(
@@ -203,11 +203,5 @@ lazy val readme = (project in file("readme"))
       "org.scalatest" %% "scalatest" % Versions.scalatest % "tut"
     )
   ).dependsOn(
-    phantomDsl,
-    phantomJdk8,
-    phantomExample,
-    phantomConnectors,
-    phantomFinagle,
-    phantomStreams,
-    phantomThrift
+    sqlParser
   ).enablePlugins(TutPlugin, CrossPerProjectPlugin)
