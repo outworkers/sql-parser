@@ -5,9 +5,9 @@ scala:
 - 2.11.11
 cache:
   directories:
-  - $HOME/.m2
-  - $HOME/.ivy2
-  - $HOME/.sbt/boot/scala-$TRAVIS_SCALA_VERSION
+  - "$HOME/.m2"
+  - "$HOME/.ivy2"
+  - "$HOME/.sbt/boot/scala-$TRAVIS_SCALA_VERSION"
 before_cache:
 - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
 - find $HOME/.sbt -name "*.lock" -delete
@@ -40,10 +40,12 @@ before_script:
 - curl -L -o $HOME/.sbt/launchers/0.13.16/sbt-launch.jar https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.16/sbt-launch.jar
 - travis_retry sbt "++$TRAVIS_SCALA_VERSION update"
 script:
-  - sbt test
+- sbt test
 deploy:
   provider: pages
   skip_cleanup: true
-  github_token: $github_token
+  github_token: "$github_token"
   on:
     branch: develop
+dd:
+  secure: L8zNip/aErHXM3Q8NJvv1iv9ZkP4zKYHqU0Qb0qpYOoo+MyoS5nw/4GcYl5plxexx+rSS2uJzpvwzBCDF5rzUQZf3ix3tzOFjNu1jQvgPZ/vBJHAIiaaxZ0M5rSQxf6LT0AG5TbjbXQkYxsMu+oior5yt5mNqZgzwXt0EskPuzdFIHaTp8OmCfCjnduMThKCAi+3rwAk/xZV0M+E12mQ1xq4Xt10roOyKY2I3b9MF8QrORzhfoVxoBR7gqQGN/JPxyztwtR06nnvdGRncHrDOUtkVmt7uVOo8aT3xGLff15q4blJWJ0CXWA+YGAHq3F/y3EmG9C77N/As2zVoU3GeOrf7nfj5nY0U8/Gh55C5HY/59hA0ZJwB+plt7yffKCfA4ernCo+E7JofoMzzscivmoDvyDaqBBoa9JHSfxKvN7DrwSFxhxGZvmV/CY/ezHbXjUqux53WD9P7f/8CLKaEbWJQ01um2ajrqJS7oRGp0IURqyu90soKukvM78zIId4Tx1ISoIN7sYsMZjJWbhniMXESZP/q9FTtjLfYph14/yL/13sWSluAglcpeoGwzkwbR9o/Sj2vB+EIuc1mDKJpuF1qKw1Zob+HJbqrsYhL2FeodKBRM7eZaPNeGGt6yG86Cy9MsTGgnNCWgWZGhk9lJFtz6T/3S5gyReq8L70eMk=
