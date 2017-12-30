@@ -5,7 +5,7 @@ import java.time.{Instant, ZoneId, ZonedDateTime}
 
 import anorm.PrebuiltPreparedStatement
 import com.github.mauricio.async.db.{Connection, QueryResult, RowData}
-import com.outworkers.sql.postgres.parser.{DataType, ParserResult, PostgresRowParser}
+import com.outworkers.sql.postgres.parser._
 import org.joda.time.DateTime
 
 import scala.concurrent.{ExecutionContext, Future}
