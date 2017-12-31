@@ -40,7 +40,7 @@ before_script:
 - curl -L -o $HOME/.sbt/launchers/0.13.16/sbt-launch.jar https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.16/sbt-launch.jar
 - travis_retry sbt "++$TRAVIS_SCALA_VERSION update"
 script:
-- sbt test
+- ./build/run_tests.sh
 deploy:
   provider: pages
   skip_cleanup: true
